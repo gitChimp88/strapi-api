@@ -14,18 +14,17 @@ module.exports = {
     // Deduct amount from sender
     // Add amount to receiver
     // Add the transaction to transact
-    const [senderAcc] = await strapi.entityService.findMany(
-      "api::account.account",
-      {
+    const [senderAcc] = await strapi
+      .documents("api::account.account")
+      .findMany({
         filters: { name: { $eq: sender } },
-      }
-    );
-    const [receiverAcc] = await strapi.entityService.findMany(
-      "api::account.account",
-      {
+      });
+
+    const [receiverAcc] = await strapi
+      .documents("api::account.account")
+      .findMany({
         filters: { name: { $eq: receiver } },
-      }
-    );
+      });
 
     senderAcc.balance = parseFloat(senderAcc.balance) - parseFloat(amount);
     receiverAcc.balance = parseFloat(receiverAcc.balance) + parseFloat(amount);
@@ -42,7 +41,7 @@ module.exports = {
       status: "published",
     });
 
-    entity = await strapi.entityService.create("api::transact.transact", {
+    entity = await strapi.documents("api::transact.transact").create({
       data: { sender, receiver, amount, status: "published" },
     });
 
